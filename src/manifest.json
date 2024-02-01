@@ -17,5 +17,18 @@
   "background": {
     "{{chrome}}.service_worker": "src/background.ts",
     "{{firefox}}.scripts": ["src/background.ts"]
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.tatoeba.org/*/sentences_lists/show/*"],
+      "js": ["src/addMissingVoices.ts"]
+    }
+  ],
+  "options_ui": {
+    "page": "src/options.html"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "*://tatoeba.org/*"
+  ]
 }
