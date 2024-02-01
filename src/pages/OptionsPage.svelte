@@ -1,55 +1,15 @@
 <script lang="ts">
     import { FloatingLabelInput, Button, Toast, Heading, P } from "flowbite-svelte";
+
+    import Options from "./Options.svelte";
     import browser from "webextension-polyfill";
     import { onMount } from "svelte";
 
-    let apiKey: string;
     let truncatedKey: string;
 
-    let checkingKey = false;
-    let keySaved = false;
-
-    let status: string = "";
-
     onMount( async () => {
-        console.log("Getting truncated key")
         truncatedKey = (await browser.storage.local.get("truncated_eleven_labs_key"))["truncated_eleven_labs_key"]
-        console.log("Truncated key is ", truncatedKey)
     })
-
-    const storeAPIKey = async (event: MouseEvent) => {
-        const key = document.getElementById("eleven_labs_key") as HTMLInputElement
-
-        status="extracting"
-
-        if (key?.value) {
-            const providedKey = key?.value
-            truncatedKey = providedKey.slice(0, 1) + "..." + providedKey.slice(-3)
-
-            checkingKey = true
-
-            try {
-                const response = await fetch(
-                "https://api.elevenlabs.io/v1/user", 
-                {
-                    method: "GET",
-                    headers: {
-                        "xi-api-key": providedKey
-                    }
-                })
-            
-                if (response.status === 200) {
-                    status="success"
-                    await browser.storage.local.set({ eleven_labs_key: providedKey, truncated_eleven_labs_key: truncatedKey });
-                }
-                checkingKey = false
-                keySaved = true
-            } catch {
-                status="error"
-                checkingKey = false
-            }
-        }
-    }
 
     const removeAPIKey = async (event: MouseEvent) => {
         await browser.storage.local.remove(["eleven_labs_key", "truncated_eleven_labs_key"])
@@ -72,17 +32,9 @@
         </P>
     {/if}
 
-    <div class="mb-2">
-        <FloatingLabelInput bind:value={apiKey} id="eleven_labs_key" name="apiKey" type="text" label="Elevenlabs API Key">
-            Elevenlabs API Key
-        </FloatingLabelInput>
-    </div>
-    <div class="pb-4">
-        <Button on:click={storeAPIKey}>Save</Button>
-    </div>
-    <hr class="py-4"/>
+    <Options />
 
-    <div style:display={truncatedKey ? "block" : "none"}>
+    <div class="mx-2" style:display={truncatedKey ? "block" : "none"}>
         <P>
             To remove your API key entirely.... You know how buttons work.
         </P>
@@ -90,15 +42,3 @@
         <Button on:click={removeAPIKey}>Remove</Button>
     </div>
 </div>  
-
-<div id="toast" style:display={checkingKey ? "block" : "none"}>
-    <Toast>
-        "Checking your API Key."
-    </Toast>
-</div>
-
-<div id="toast" style:display={keySaved ? "block" : "none"}>
-    <Toast>
-        "Valid API Key; saved."
-    </Toast>
-</div>

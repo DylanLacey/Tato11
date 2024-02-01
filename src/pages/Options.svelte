@@ -10,17 +10,12 @@
     let keySaved = false;
     let keyWrong = false;
 
-    let status: string = "";
-
     onMount( async () => {
         truncatedKey = (await browser.storage.local.get("truncated_eleven_labs_key"))["truncated_eleven_labs_key"]
-        console.log("tr ", truncatedKey)
     })
 
     const storeAPIKey = async (event: MouseEvent) => {
         const key = document.getElementById("eleven_labs_key") as HTMLInputElement
-
-        status="extracting"
 
         if (key?.value) {
             const providedKey = key?.value
@@ -40,16 +35,12 @@
             
                 checkingKey = false
                 if (response.status === 200) {
-                    status="success"
                     await browser.storage.local.set({ eleven_labs_key: providedKey, truncated_eleven_labs_key: truncatedKey });
                     keySaved = true
-                    console.log("Saved key")
-                    console.log(await browser.storage.local.get("eleven_labs_key"))
                 } else {
                     keyWrong = true
                 }
             } catch {
-                status="error"
                 keyWrong = true
                 checkingKey = false
             }

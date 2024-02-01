@@ -34,7 +34,8 @@
 
     <div>
       <P class="px-4">
-        Tato11 fills in the gaps in Tatoeba's database of sentences.
+        Tato11 fills in the gaps in Tatoeba's database of sentences. To use it, open your sentences list and click the bunny icon:
+        <img src="/bunny.svg" alt="The Tato11 icon; Bunny ears emerging from a top hat." style="height: 24px; width: 24px;" class="inline"/>
       </P>
     </div>
 
