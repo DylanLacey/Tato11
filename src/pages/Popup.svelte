@@ -1,7 +1,7 @@
 <script lang="ts">
   console.log("Hello from the popup!");
 
-  import { streamAudio, streamAndRetrieveAudioData } from "../addMissingVoices";
+  import { streamAudio, streamAndRetrieveAudioData } from "../elevenAPI";
   import { Button } from "flowbite-svelte";
 
   const doVoice = async () => {
