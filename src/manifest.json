@@ -20,14 +20,16 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://*.tatoeba.org/*/sentences_lists/show/*"],
+      "matches": ["https://tatoeba.org/*"],
       "js": ["src/addMissingVoices.ts"]
     }
   ],
   "options_ui": {
     "page": "src/options.html"
   },
-  "permissions": ["storage"],
+  "permissions": [
+    "storage",  "*://tatoeba.org/*"
+  ],
   "host_permissions": [
     "*://tatoeba.org/*"
   ]

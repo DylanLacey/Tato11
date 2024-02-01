@@ -12,6 +12,7 @@ const sample_rate = 24000
  * @param {number} [delay=0] - [How long to wait before starting playback (Seconds, as a double)
 */
 export const streamAudio = async (text: string = defaultText, voice_id: string = defaultVoice, delay: number = 0) => {
+    console.log("Requesting ", text)
     const response = await doFetch(text, voice_id)
     const handler = playHandler(delay)
 
@@ -139,15 +140,23 @@ const doFetch = async (text: string, voice_id: string) => {
     url.searchParams.append("optimize_streaming_latency", "2")
     url.searchParams.append("output_format", "pcm_24000")
 
-    return await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "xi-api-key": apiKey
-        },
-        body: JSON.stringify({
-            model_id: "eleven_multilingual_v2",
-            text: text,
+    console.log(`Asking for ${text} from ${url}`)
+    try{
+        return await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "xi-api-key": apiKey
+            },
+            body: JSON.stringify({
+                model_id: "eleven_multilingual_v2",
+                text: text,
+            })
         })
-    })
+    } catch (e){
+        console.log("ERRR")
+        console.log(e)
+        console.log("So that's a shame")
+    }
+
 }
