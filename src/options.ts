@@ -1,3 +1,3 @@
-import Options from './pages/Options.svelte'
+import OptionsPage from './pages/OptionsPage.svelte'
 
-new Options({ target: document.body });
+new OptionsPage({ target: document.body });

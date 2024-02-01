@@ -32,5 +32,10 @@
   ],
   "host_permissions": [
     "*://tatoeba.org/*"
-  ]
+  ],
+  "{{firefox}}.browser_specific_settings": {
+    "gecko": {
+      "id": "tato11@dylanlacey.com"
+    }
+  }
 }

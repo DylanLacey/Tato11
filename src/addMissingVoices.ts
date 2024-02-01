@@ -15,7 +15,7 @@ let volumeOffIcons
 type Entry = {text: string, volumeElement: HTMLElement | null, id: string | undefined}
 
 import browser from "webextension-polyfill";
-import iconUrl from "../public/noun-magic-1945859-16252c.svg"
+import iconUrl from "../public/bunny.svg"
 
 sentenceElements = Array.from(document.getElementsByClassName(sentenceSelector))
 

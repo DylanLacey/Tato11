@@ -8,13 +8,13 @@
 
     let checkingKey = false;
     let keySaved = false;
-    let keyWrong = false;
 
     let status: string = "";
 
     onMount( async () => {
+        console.log("Getting truncated key")
         truncatedKey = (await browser.storage.local.get("truncated_eleven_labs_key"))["truncated_eleven_labs_key"]
-        console.log("tr ", truncatedKey)
+        console.log("Truncated key is ", truncatedKey)
     })
 
     const storeAPIKey = async (event: MouseEvent) => {
@@ -24,7 +24,7 @@
 
         if (key?.value) {
             const providedKey = key?.value
-            const truncatedKey = providedKey.slice(0, 1) + "..." + providedKey.slice(-3)
+            truncatedKey = providedKey.slice(0, 1) + "..." + providedKey.slice(-3)
 
             checkingKey = true
 
@@ -38,33 +38,56 @@
                     }
                 })
             
-                checkingKey = false
                 if (response.status === 200) {
                     status="success"
                     await browser.storage.local.set({ eleven_labs_key: providedKey, truncated_eleven_labs_key: truncatedKey });
-                    keySaved = true
-                    console.log("Saved key")
-                    console.log(await browser.storage.local.get("eleven_labs_key"))
-                } else {
-                    keyWrong = true
                 }
+                checkingKey = false
+                keySaved = true
             } catch {
                 status="error"
-                keyWrong = true
                 checkingKey = false
             }
         }
     }
+
+    const removeAPIKey = async (event: MouseEvent) => {
+        await browser.storage.local.remove(["eleven_labs_key", "truncated_eleven_labs_key"])
+        truncatedKey = ""
+    }
 </script>
 
 <div class="flex flex-col m-4">
+    <Heading tag="h2" class="mb-4">Tato11 Options</Heading>
+
+    <P class="my-2">
+        To use Tato11, you'll need to create a free account on <a href="https://elevenlabs.io">Elevenlabs</a>.
+        
+        Once you've signed up, log in and check your profile settings to find your API key.
+    </P>
+
+    {#if truncatedKey}
+        <P class="my-2">
+            (Currently saved key: {truncatedKey})
+        </P>
+    {/if}
+
     <div class="mb-2">
         <FloatingLabelInput bind:value={apiKey} id="eleven_labs_key" name="apiKey" type="text" label="Elevenlabs API Key">
             Elevenlabs API Key
         </FloatingLabelInput>
     </div>
-    <div>
+    <div class="pb-4">
         <Button on:click={storeAPIKey}>Save</Button>
+    </div>
+    <hr class="py-4"/>
+
+    <div style:display={truncatedKey ? "block" : "none"}>
+        <P>
+            To remove your API key entirely.... You know how buttons work.
+        </P>
+        <br/>
+        <Button on:click={removeAPIKey}>Remove</Button>
     </div>
 </div>  
 
@@ -77,11 +100,5 @@
 <div id="toast" style:display={keySaved ? "block" : "none"}>
     <Toast>
         "Valid API Key; saved."
-    </Toast>
-</div>
-
-<div id="toast" style:display={keyWrong ? "block" : "none"}>
-    <Toast>
-        "Invalid API Key."
     </Toast>
 </div>
