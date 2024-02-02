@@ -29,7 +29,6 @@
     "webextension-polyfill": "^0.10.0"
   },
   "dependencies": {
-    "howler": "^2.2.4",
-    "pcm-util": "^3.0.0"
+
   }
 }
