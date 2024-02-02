@@ -12,7 +12,11 @@ let sentenceElements: Array<Element>
 let sentences
 let volumeOffIcons
 
-type Entry = {text: string, volumeElement: HTMLElement | null, id: string | undefined}
+type Entry = {
+    text: string, 
+    volumeElement: HTMLElement | null, 
+    id: string | undefined
+}
 
 import browser from "webextension-polyfill";
 import iconUrl from "../public/bunny.svg"
@@ -23,9 +27,9 @@ tatoLogger.log(`Found ${sentenceElements.length} sentences`)
 volumeOffIcons = document.querySelectorAll(volumeIconSelector)
 
 sentences = sentenceElements.reduce((acc: Array<Entry>, s) => {
-    const volumeIcon = s.querySelector(volumeIconSelector)
+    const missingVolumeIcon = s.querySelector(volumeIconSelector)
 
-    if (volumeIcon) {
+    if (missingVolumeIcon) {
         acc.push({
             text: s.querySelector(sentenceTextSelector)?.innerHTML || "",
             volumeElement: s.querySelector(volumeIconSelector),

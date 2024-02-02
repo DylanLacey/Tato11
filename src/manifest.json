@@ -16,7 +16,8 @@
   },
   "background": {
     "{{chrome}}.service_worker": "src/background.ts",
-    "{{firefox}}.scripts": ["src/background.ts"]
+    "{{firefox}}.scripts": ["src/background.ts"],
+    "persistent": false
   },
   "content_scripts": [
     {
@@ -29,13 +30,5 @@
   },
   "permissions": [
     "storage",  "*://tatoeba.org/*"
-  ],
-  "host_permissions": [
-    "*://tatoeba.org/*"
-  ],
-  "{{firefox}}.browser_specific_settings": {
-    "gecko": {
-      "id": "tato11@dylanlacey.com"
-    }
-  }
+  ]
 }

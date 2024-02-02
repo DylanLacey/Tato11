@@ -1,9 +1,15 @@
+import browser from "webextension-polyfill";
+
 const defaultVoice = "IKne3meq5aSn9XLyUdCD"
 const defaultText = "Mate! You forgot to provide a text argument!"
-
-const apiKey = "c52d67f158423efa139aa506780a72c7" 
-
 const sample_rate = 24000
+let apiKey: string
+
+browser.storage.onChanged.addListener((changes, area) => {
+    if (area === "local" && changes["eleven_labs_key"]) {
+        apiKey = changes["eleven_labs_key"].newValue
+    }
+})
 
 /** 
  * Uses the Web Audio API to playback the desired audio
@@ -12,7 +18,6 @@ const sample_rate = 24000
  * @param {number} [delay=0] - [How long to wait before starting playback (Seconds, as a double)
 */
 export const streamAudio = async (text: string = defaultText, voice_id: string = defaultVoice, delay: number = 0) => {
-    console.log("Requesting ", text)
     const response = await doFetch(text, voice_id)
     const handler = playHandler(delay)
 
@@ -98,9 +103,7 @@ const getHandlers = () => {
     return {audioDataProducer, audioDataChunkHandler}
 }
 
-export const processStream = async (response: Response, fn: Function) => {
-    const streamReader = response.body?.getReader()
-
+export const processStream = async (streamReader: ReadableStreamDefaultReader | undefined, fn: {(chunk: Float32Array): any}) => {
     let readingStream = true
     let leftover: number | undefined;
     while (readingStream) {
@@ -128,6 +131,8 @@ export const processStream = async (response: Response, fn: Function) => {
                 channelData[i/2] = floatSample
             }
 
+            console.log("channelData is ", channelData.length)
+            console.log("There were ", Math.floor(dataView.byteLength / 2))
             fn(channelData)
         }
 
@@ -136,13 +141,14 @@ export const processStream = async (response: Response, fn: Function) => {
 }    
 
 const doFetch = async (text: string, voice_id: string) => {
+    apiKey = apiKey ? apiKey : (await browser.storage.local.get("eleven_labs_key"))["eleven_labs_key"]
     const url = new URL(`https://api.elevenlabs.io/v1/text-to-speech/${voice_id}/stream`)
     url.searchParams.append("optimize_streaming_latency", "2")
     url.searchParams.append("output_format", "pcm_24000")
 
     console.log(`Asking for ${text} from ${url}`)
     try{
-        return await fetch(url, {
+        const response =  await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -153,10 +159,13 @@ const doFetch = async (text: string, voice_id: string) => {
                 text: text,
             })
         })
-    } catch (e){
-        console.log("ERRR")
-        console.log(e)
-        console.log("So that's a shame")
-    }
 
-}
+        if (response.status === 200) {
+            return response.body?.getReader()
+        } else {
+            console.log("Tato11 couldn't access the Elevenlabs API: ", response)
+        }
+    } catch (e){
+        console.log("Error accessing Elevenlabs API: ", e)
+    }
+}  

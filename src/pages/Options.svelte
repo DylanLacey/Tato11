@@ -24,18 +24,17 @@
             checkingKey = true
 
             try {
-                const response = await fetch(
-                "https://api.elevenlabs.io/v1/user", 
+                const response = await fetch( "https://api.elevenlabs.io/v1/user", 
                 {
-                    method: "GET",
-                    headers: {
-                        "xi-api-key": providedKey
-                    }
+                    headers: { "xi-api-key": providedKey }
                 })
             
                 checkingKey = false
                 if (response.status === 200) {
-                    await browser.storage.local.set({ eleven_labs_key: providedKey, truncated_eleven_labs_key: truncatedKey });
+                    await browser.storage.local.set({ 
+                        eleven_labs_key: providedKey, 
+                        truncated_eleven_labs_key: truncatedKey 
+                    });
                     keySaved = true
                 } else {
                     keyWrong = true
@@ -50,7 +49,9 @@
 
 <div class="flex flex-col m-4">
     <div class="mb-2">
-        <FloatingLabelInput bind:value={apiKey} id="eleven_labs_key" name="apiKey" type="text" label="Elevenlabs API Key">
+        <FloatingLabelInput bind:value={apiKey} 
+            id="eleven_labs_key" name="apiKey" type="text" label="Elevenlabs API Key">
+
             Elevenlabs API Key
         </FloatingLabelInput>
     </div>
